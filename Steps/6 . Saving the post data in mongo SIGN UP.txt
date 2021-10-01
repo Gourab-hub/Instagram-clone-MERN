@@ -1,3 +1,7 @@
+1.server>route>auth.js
+
+
+
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
