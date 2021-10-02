@@ -3,7 +3,7 @@ import Navbar from'./components/Navbar'
 import {BrowserRouter,Route} from "react-router-dom"
 import Home from './components/screens/Home';
 import Signup from './components/screens/Signup';
-import Signin from './components/screens/Login';
+import Signin from './components/screens/Signin';
 import Profile from './components/screens/Profile';
 function App() {
   return (
