@@ -12,8 +12,6 @@ app.use(express.json());
 app.use(require('./routes/auth'))
 
 
-
-
 //Connect mongoDB
 mongoose.connect(MONGOURI,{ 
     useNewUrlParser:true,
