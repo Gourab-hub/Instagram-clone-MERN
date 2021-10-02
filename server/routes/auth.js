@@ -4,16 +4,15 @@ const mongoose = require('mongoose');
 const User = mongoose.model("User")
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {JWT_SECRET} = require('../keys')
-const requireLogin= require('../middleware/requiredLogin')
+const { JWT_SECRET } = require('../keys')
+const requireLogin = require('../middleware/requiredLogin')
 
 
 router.get('/', (req, res) => {
     res.send("hello")
 })
 
-
-router.get('/protected',requireLogin, (req, res) => {
+router.get('/protected', requireLogin, (req, res) => {
     res.send("hello")
 })
 
@@ -32,9 +31,9 @@ router.post('/signup', (req, res) => {
                     const user = new User({
                         name,
                         email,
-                        password:hashedPassword,
+                        password: hashedPassword,
                     })
-                    console.log(user)
+                    // console.log(user)
                     user.save()
                         .then((user) => {
                             res.status(200).json({ error: "User saved Successfully" })
@@ -45,31 +44,30 @@ router.post('/signup', (req, res) => {
         .catch((error) => { console.log(error) })
 })
 
-
 router.post('/signin', (req, res) => {
-    const {email, password } = req.body;
-    if ( !email || !password) {
+    const { email, password } = req.body;
+    if (!email || !password) {
         res.status(422).json({ error: "Please add email or password" })
     }
-    User.findOne({ email: email})
-    .then((savedUser) => {
-        if(!savedUser){
-           return res.status(422).json({ error: "Invalid Email" })
-        }
-        bcrypt.compare(password, savedUser.password)
-        .then(doMatch =>{
-            if(doMatch){
-                //res.status(422).json({ error: "Successfully Signed In" })
+    User.findOne({ email: email })
+        .then((savedUser) => {
+            if (!savedUser) {
+                return res.status(422).json({ error: "Invalid Email" })
+            }
+            bcrypt.compare(password, savedUser.password)
+                .then(doMatch => {
+                    if (doMatch) {
+                        //res.status(422).json({ error: "Successfully Signed In" })
 
-                //Token has been registered
-                const token = jwt.sign({_id:savedUser._id}, JWT_SECRET);
-                res.json({ token:token})
-            }
-            else{
-                return res.status(422).json({ error: "Invalid Password" })
-            }
+                        //Token has been registered
+                        const token = jwt.sign({ _id: savedUser._id }, JWT_SECRET);
+                        res.json({ token: token })
+                    }
+                    else {
+                        return res.status(422).json({ error: "Invalid Password" })
+                    }
+                })
         })
-    })
 })
 
 module.exports = router
