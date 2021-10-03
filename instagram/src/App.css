@@ -73,4 +73,5 @@ a {
 .text-name{
     font-weight: 400;
     margin: 20px 20px !important;
+    padding: 6px !important;
 }
