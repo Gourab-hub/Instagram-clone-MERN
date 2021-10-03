@@ -4,7 +4,6 @@ const Profile = () => {
     return (
         <div style={{maxWidth:"80%",margin:"0px auto"}}>
             <div style={{
-
                 display: 'flex',
                 justifyContent:'space-around',
                 margin:'30px auto',

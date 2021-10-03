@@ -5,6 +5,7 @@ import Home from './components/screens/Home';
 import Signup from './components/screens/Signup';
 import Signin from './components/screens/Signin';
 import Profile from './components/screens/Profile';
+import Createpost from './components/screens/CreatePost';
 function App() {
   return (
     <div className="App">
@@ -25,6 +26,13 @@ function App() {
       <Route path="/profile">
         <Profile/>
       </Route>
+
+      
+      <Route path="/createpost">
+        <Createpost/>
+      </Route>
+
+
       </BrowserRouter>
     </div>
   );
