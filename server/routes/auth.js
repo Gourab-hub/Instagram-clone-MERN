@@ -36,7 +36,7 @@ router.post('/signup', (req, res) => {
                     // console.log(user)
                     user.save()
                         .then((user) => {
-                            res.status(200).json({ error: "User saved Successfully" })
+                            res.status(200).json({ message: "User saved Successfully" })
                         })
                         .catch((error) => { console.log(error) })
                 })

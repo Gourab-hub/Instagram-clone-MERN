@@ -1,3 +1,5 @@
+1.src>components>screens>Signup.js
+
 import React, { useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import M from 'materialize-css'
@@ -66,3 +68,9 @@ const Signup = () => {
 }
 
 export default Signup
+
+
+2. package.json  
+
+
+ "proxy": "http://localhost:5000",

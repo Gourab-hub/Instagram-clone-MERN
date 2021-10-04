@@ -5,7 +5,7 @@ const Createpost = () => {
         <div className="mycard">
            
             <div className="card auth-card input-field">
-            <h5 className="text-name">Create Post</h5>
+            <h5 className="Create-name">Instagram</h5>
                 <input type="text" placeholder="Title" />
                 <input type="text" placeholder="Body" />
                 <div className="file-field input-field">
