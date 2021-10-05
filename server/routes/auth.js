@@ -64,6 +64,7 @@ router.post('/signin', (req, res) => {
                         const {_id,name,email}=savedUser;
                         // console.log(_id,name,email)
                         res.json({ token: token, user:{_id,name,email}})
+                       
                     }
                     else {
                         return res.status(422).json({ error: "Invalid Password" })

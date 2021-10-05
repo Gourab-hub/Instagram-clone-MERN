@@ -47,10 +47,12 @@ router.get('/allpost', (req, res)=>{
 
 router.post('/createpost',requireLogin, (req, res) => {
 
-    const {title,body} = req.body;
-    if (!title || !body) {
-       return res.status(404).json({ error: "Please add title and body"})
+    const {title,body,pic} = req.body;
+    console.log(title,body,pic)
+    if(!title || !body|| !pic){
+        return res.status(404).json({ error: "Please add title and body"})
     }
+  
     //req.user pelam middleware use korar jonno
     // console.log(req.user)
     // res.send("ok")
@@ -80,6 +82,7 @@ router.post('/createpost',requireLogin, (req, res) => {
     const post= new Post({
         title,
         body,
+        photo:pic,
         postedBy: req.user
     })
     post.save().then((result) =>{

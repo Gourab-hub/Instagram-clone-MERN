@@ -12,7 +12,7 @@ const postSchema = new mongoose.Schema({
     },
     photo:{  
         type: 'string',
-        default:"no pic"
+        required: true,
     },
     postedBy:{ 
         type: ObjectId,
