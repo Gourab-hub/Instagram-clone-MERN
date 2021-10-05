@@ -33,6 +33,11 @@ const Signin = () => {
                     M.toast({ html: data.error, classes: 'rounded red' })
                 }
                 else {
+
+                    //token store 
+                    localStorage.setItem("jwt",data.token)
+                    localStorage.setItem("user",JSON.stringify(data.user))
+
                     M.toast({ html: "Successfully Signin", classes: 'rounded green' })
                     histroy.push('/')
                 }
