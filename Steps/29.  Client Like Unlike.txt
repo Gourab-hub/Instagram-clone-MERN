@@ -1,3 +1,6 @@
+
+1.instagram>src>components>screens>Home.js
+
 import React, { useState, useEffect,useContext } from 'react'
 import {UserContext} from '../../App'
 

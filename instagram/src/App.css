@@ -57,11 +57,14 @@ a {
 
 .text-home {
     margin: 20px;
-    font-weight: 400;
+    font-weight: 700;
 }
 
+.text-body{
+    margin: 20px;
+}
 .text-icon {
-    margin: 0 20px;
+    margin: 0 10px;
 }
 
 .text-input {
