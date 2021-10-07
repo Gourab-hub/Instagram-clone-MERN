@@ -45,7 +45,7 @@ const Signin = () => {
                     histroy.push('/')
                 }
 
-                console.log(data);
+                console.log("data",data);
             })
             .catch(err => {
                 console.log(err);
