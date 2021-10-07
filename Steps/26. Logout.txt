@@ -1,3 +1,7 @@
+1.instagram>scr>comoponents<Navbar.js
+
+
+
 import React,{useContext} from 'react'
 import {Link,useHistory} from 'react-router-dom'
 import {UserContext} from "../App"
@@ -44,3 +48,24 @@ const Navbar = () => {
 }
 
 export default Navbar
+
+
+
+2.instagram>src>components>reducer>useReducer.js
+
+
+
+
+export const initialState =null
+
+
+export const reducer=(state,action)=>{
+    if(action.type ==="USER"){
+        //console.log("action.payload",action.payload)
+        return action.payload
+    }
+    if(action.type ==="CLEAR"){
+        return null;
+    }
+    return state
+}

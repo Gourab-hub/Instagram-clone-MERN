@@ -6,5 +6,8 @@ export const reducer=(state,action)=>{
         //console.log("action.payload",action.payload)
         return action.payload
     }
-    return action.payload
+    if(action.type ==="CLEAR"){
+        return null;
+    }
+    return state
 }
