@@ -13,6 +13,9 @@ export const UserContext = createContext()
 const Routing = () => {
   const history = useHistory();
   const {state,dispatch} = useContext(UserContext)
+
+
+
   useEffect(() => {
     
     //type = string
@@ -21,9 +24,10 @@ const Routing = () => {
     const user= JSON.parse(user1)
    // console.log(user)
    if (user) {
-    history.push('/')
+    dispatch({type: 'USER',payload:user})
+  
    }else {
-     dispatch({type: 'USER',path:user})
+  
     history.push('/signin')
    }
   }, [])

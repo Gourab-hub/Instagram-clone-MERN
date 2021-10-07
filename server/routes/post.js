@@ -48,7 +48,7 @@ router.get('/allpost',requireLogin, (req, res)=>{
 router.post('/createpost',requireLogin, (req, res) => {
 
     const {title,body,pic} = req.body;
-    console.log(title,body,pic)
+    //console.log(title,body,pic)
     if(!title || !body|| !pic){
         return res.status(404).json({ error: "Please add title and body"})
     }
