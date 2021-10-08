@@ -15,7 +15,7 @@ const Home = () => {
                 setData(result.posts)
             })
     }, [])
-    console.log(data)
+    console.log("data",data)
 
     const likePost = (id) => {
         fetch("/like", {
@@ -29,11 +29,14 @@ const Home = () => {
             })
         }).then(res=>res.json())
         .then(result => {
+            console.log("result",result)
             const newData= data.map(item =>{
                 if(item._id ===result._id){
+                    console.log("result like",result)
                     return result;
                 }
                 else{
+                    console.log("item like",item)
                     return item;
                 }
             })
@@ -59,9 +62,12 @@ const unlikePost = (id) => {
     .then(result => {
         const newData= data.map(item =>{
             if(item._id ===result._id){
+                console.log("result unlike",result)
                 return result;
+
             }
             else{
+                console.log("item unlike",item)
                 return item;
             }
         })
