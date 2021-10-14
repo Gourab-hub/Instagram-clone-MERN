@@ -64,7 +64,7 @@ a {
     margin: 20px;
 }
 .text-icon {
-    margin: 0 10px;
+    margin: 10px 10px;
 }
 
 .text-input {
@@ -77,8 +77,9 @@ a {
     font-weight: 700;
     font-style:oblique;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 20px 20px !important;
-    padding: 6px !important;
+
+ 
+ 
 }
 .Create-name{
     font-weight: 500;
@@ -90,4 +91,11 @@ a {
     top:30px;
     right:10px;
     left: auto !important;
+}
+
+.flex{
+    display:flex !important;
+    
+    justify-content: space-between;
+
 }
