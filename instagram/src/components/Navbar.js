@@ -6,7 +6,7 @@ const Navbar = () => {
     const history =useHistory();
     const {state,dispatch}=useContext(UserContext)
 
-    console.log("state",state)
+    // console.log("state",state)
     const returnList=()=>{
         if(state){
             return [
