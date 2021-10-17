@@ -66,10 +66,8 @@ const UserProfile = () => {
             })
         }).then(res=>res.json())
         .then(data=>{
-            
             dispatch({type:"UPDATE",payload:{following:data.following,followers:data.followers}})
              localStorage.setItem("user",JSON.stringify(data))
-
              setProfile((prevState)=>{
                 const newFollower = prevState.user.followers.filter(item=>item != data._id )
                  return {
@@ -92,7 +90,6 @@ const UserProfile = () => {
         <>
             {
                 userProfile ?
-
                     <div style={{ maxWidth: "80%", margin: "0px auto" }}>
                         <div style={{
                             display: 'flex',
@@ -100,7 +97,6 @@ const UserProfile = () => {
                             margin: '30px auto',
                             width: '70%', height: '200px', align: 'center',
                             borderBottom: '1px solid gray'
-
                         }}>
                             <div>
                                 <img src="https://images.unsplash.com/photo-1479936343636-73cdc5aae0c3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=580&q=80" style={{ width: '160px', height: '160px', borderRadius: "80px" }} />
@@ -112,7 +108,6 @@ const UserProfile = () => {
                                     <h5>{userProfile.posts.length} posts</h5>
                                     <h5>{userProfile.user.followers.length} followers</h5>
                                     <h5>{userProfile.user.following.length} Following</h5>
-
                                 </div>
                                 {showfollow?
                    <button style={{
