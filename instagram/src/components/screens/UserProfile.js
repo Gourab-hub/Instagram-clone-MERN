@@ -6,8 +6,9 @@ import { useParams } from 'react-router-dom'
 const UserProfile = () => {
     const [userProfile, setProfile] = useState(null)
     const { state, dispatch } = useContext(UserContext)
-    const [showfollow,setShowFollow] = useState(true)
+
     const { userid } = useParams()
+    const [showfollow,setShowFollow] = useState(state?!state.following.includes(userid):true)
     console.log(userid)
 
     useEffect(() => {
@@ -17,7 +18,7 @@ const UserProfile = () => {
             }
         }).then(res => res.json())
             .then(result => {
-                 //console.log(result)
+                 console.log(result)
 
                 setProfile(result)
             })
@@ -99,7 +100,7 @@ const UserProfile = () => {
                             borderBottom: '1px solid gray'
                         }}>
                             <div>
-                                <img src="https://images.unsplash.com/photo-1479936343636-73cdc5aae0c3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=580&q=80" style={{ width: '160px', height: '160px', borderRadius: "80px" }} />
+                                <img className="img-border" src={userProfile ? userProfile.user.pic : "loading"} style={{ width: '160px', height: '160px', borderRadius: "80px" }} />
                             </div>
                             <div>
                                 <h4>{userProfile ? userProfile.user.name : "loading"}</h4>

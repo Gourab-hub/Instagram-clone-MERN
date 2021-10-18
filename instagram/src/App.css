@@ -99,3 +99,29 @@ a {
     justify-content: space-between;
 
 }
+
+.card-heading{
+    display:flex !important;
+
+  justify-content: space-between;
+  margin: 10px;
+
+    
+}
+
+.card-left-header{
+    display:flex !important;
+}
+
+.img-header-header{
+    height: 35px;
+    width: 35px;
+    border-radius: 80px;
+    margin-top: 10px;
+    margin-right: 10px;
+    border: 2px solid rgb(23, 110, 190);
+}
+
+.img-border{
+    border: 2px solid rgb(23, 110, 190);
+}

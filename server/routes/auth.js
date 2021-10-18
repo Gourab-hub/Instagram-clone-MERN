@@ -17,7 +17,7 @@ router.get('/protected', requireLogin, (req, res) => {
 })
 
 router.post('/signup', (req, res) => {
-    const { name, email, password } = req.body;
+    const {name,email,password,pic} = req.body 
     if (!name || !email || !password) {
         res.status(422).json({ error: "Please add all required fields" })
     }
@@ -32,6 +32,7 @@ router.post('/signup', (req, res) => {
                         name,
                         email,
                         password: hashedPassword,
+                        pic
                     })
                     // console.log(user)
                     user.save()
@@ -61,9 +62,9 @@ router.post('/signin', (req, res) => {
 
                         //Token has been registered
                         const token = jwt.sign({ _id: savedUser._id }, JWT_SECRET);
-                        const {_id,name,email,followers,following}=savedUser;
+                        const {_id,name,email,followers,following,pic}=savedUser;
                         // console.log(_id,name,email)
-                       res.json({ token: token, user:{_id,name,email,followers,following}})
+                       res.json({ token: token, user:{_id,name,email,followers,following,pic}})
                        
                     }
                     else {

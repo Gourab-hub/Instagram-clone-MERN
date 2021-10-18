@@ -6,6 +6,7 @@ const Post =  mongoose.model("Post")
 const User = mongoose.model("User")
 
 router.get('/user/:id', requireLogin, (req, res) =>{
+    console.log(req.params.id)
     User.findOne({_id: req.params.id})
     .select("-password")
     .then(user =>{
@@ -16,7 +17,6 @@ router.get('/user/:id', requireLogin, (req, res) =>{
             res.json({user,posts});
 
         })
-
     })
     .catch(err =>console.error(err));
 })

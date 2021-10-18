@@ -10,10 +10,10 @@ const Navbar = () => {
     const returnList=()=>{
         if(state){
             return [
-                <li><Link to="/profile">Profile</Link></li>,
-                <li><Link to="/createpost">Create</Link></li>,
-                <li key="4"><Link to="/myfollowingpost">My following Posts</Link></li>,
-                <li> <button className="btn waves-effect waves-light #448aff blue accent-2" 
+                <li key="1"><Link to="/profile">Profile</Link></li>,
+                <li key="2"><Link to="/createpost">Create</Link></li>,
+                <li key="3"><Link to="/myfollowingpost">My following Posts</Link></li>,
+                <li key="4"> <button className="btn waves-effect waves-light #448aff blue accent-2" 
                 onClick={() => {
                     localStorage.clear();
                     dispatch({type: 'CLEAR'})
@@ -26,8 +26,8 @@ const Navbar = () => {
 
         }else{
             return [
-                <li><Link to="/signin">Login</Link></li>,
-                <li><Link to="/signup">Signup</Link></li>
+                <li key="1"><Link to="/signin">Login</Link></li>,
+                <li key="2"><Link to="/signup">Signup</Link></li>
                 
             ]
         }
