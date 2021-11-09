@@ -1,0 +1,126 @@
+1.Scr>components>Home.js
+
+
+import React from 'react'
+
+const Home = () => {
+    return (
+        <div className="home" >
+            <div className="card home-card" >
+                <h5 className="text-name" > ramesh </h5>
+                <div className="card-image" >
+                    <img src="https://images.unsplash.com/photo-1518577915332-c2a19f149a75?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=562&q=80" />
+                </div>
+                <div className="" >
+                    <h6 className="text-home" > title </h6> <p className="text-home" > this is amazing post </p> <i className="material-icons text-icon"
+                        style={{ color: "red" }} > favorite </i>
+                    <input className="text-input" type="text" placeholder="Add a comment" />
+                </div>
+            </div>
+            <div className="card home-card" >
+                <h5 className="text-name" > ramesh </h5>
+                <div className="card-image" >
+                    <img src="https://images.unsplash.com/photo-1618048094700-f4817c77838b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=608&q=80" />
+                </div>
+                <div className="" >
+                    <h6 className="text-home" > title </h6> <p className="text-home" > this is amazing post </p> <i className="material-icons text-icon"
+                        style={{ color: "red" }} > favorite </i>
+                    <input className="text-input" type="text" placeholder="Add a comment" />
+                </div>
+            </div>
+            <div className="card home-card" >
+                <h5 className="text-name" > ramesh </h5>
+                <div className="card-image" >
+                    <img src="https://images.unsplash.com/photo-1485893086445-ed75865251e0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mjd8fGdpcmx8ZW58MHwyfDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60" />
+                </div>
+                <div className="" >
+                    <h6 className="text-home" > title </h6> <p className="text-home" > this is amazing post </p> <i className="material-icons text-icon"
+                        style={{ color: "red" }} > favorite </i>
+                    <input className="text-input" type="text" placeholder="Add a comment" />
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export default Home
+
+
+
+2.App.js
+
+@import url('https://fonts.googleapis.com/css2?family=Grand+Hotel&display=swap');
+body {
+    background-color: #fff;
+}
+
+a {
+    color: black !important;
+}
+
+.brand-logo {
+    font-family: 'Grand Hotel', cursive;
+    font-weight: 500;
+    margin-left: 2rem;
+}
+
+.auth-card {
+    padding: 40px;
+    margin: 5rem auto;
+    text-align: center;
+    max-width: 600px;
+}
+
+.input-field input[type=text]:focus {
+    border-bottom: 1px solid rgb(6, 51, 102) !important;
+    box-shadow: 0 1px 0 0 rgb(5, 47, 94) !important;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    width: '70%';
+    margin: '30px auto';
+    justify-content: space-around;
+    align-items: center;
+}
+
+.item {
+    width: 25%;
+    margin: 20px;
+    height: 50%;
+}
+
+.home {
+    max-width: 60%;
+    margin: 26px auto;
+}
+
+.home-card {
+    width: 80%;
+    margin: 26px auto;
+}
+
+.card-image {
+    margin: 20px;
+    
+}
+
+.text-home {
+    margin: 20px;
+    font-weight: 400;
+}
+
+.text-icon {
+    margin: 0 20px;
+}
+
+.text-input {
+    margin: 10px 20px !important;
+    max-width: 90%;
+    font-weight: 400;
+}
+.text-name{
+    font-weight: 400;
+    margin: 20px 20px !important;
+}

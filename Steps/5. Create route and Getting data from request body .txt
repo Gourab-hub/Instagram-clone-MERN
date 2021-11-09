@@ -1,0 +1,67 @@
+server>route>auth.js
+
+
+const express = require('express');
+const router = express.Router();
+
+
+router.get('/', (req, res)=>{
+    res.send("hello")
+})
+
+router.post('/signup', (req, res)=>{
+    const {name,email,password} = req.body;
+
+    if(!name || !email || !password){
+        res.status(422).json({error:"Please add all required fields"})
+    }
+
+    res.json({message:"Successfully signed up"})
+})
+
+
+
+
+module.exports =router
+
+
+
+server>app.js
+
+
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const PORT = 5000
+const {MONGOURI}= require('./keys')
+require('./models/user')
+
+
+//oEJcdFHykL2gZZqn
+//mongodb+srv://Insta-DB:<password>@cluster0.yhevi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+app.use(express.json());
+app.use(require('./routes/auth'))
+
+
+
+
+//Connect mongoDB
+mongoose.connect(MONGOURI,{ 
+    useNewUrlParser:true,
+    useUnifiedTopology:true,
+})
+mongoose.connection.on('connected', ()=>{
+    console.log("connected mongodb yahh................................................................")
+})
+mongoose.connection.on('error', (err)=>{
+    console.log(' err connected',err)
+})
+
+
+
+app.listen(PORT, () => {
+    console.log("server is running on port on ", PORT)
+});
+
+
+

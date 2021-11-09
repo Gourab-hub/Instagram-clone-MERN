@@ -1,0 +1,146 @@
+1.instagram>src>components>screens>Profile.js
+
+
+
+import React,{ useState, useEffect,useContext } from 'react'
+import { UserContext } from '../../App'
+
+const Profile = () => {
+    const [mypic,setMypic]=useState([])
+    const {state,dispatch} = useContext(UserContext)
+    console.log(state)
+
+useEffect(() =>{
+    fetch("/mypost",{
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("jwt")
+        }
+    }).then((res) => res.json())
+        .then(result => {
+            console.log(result.result)
+            setMypic(result.result)
+           
+        })
+},[])
+
+    return (
+        <div style={{maxWidth:"80%",margin:"0px auto"}}>
+            <div style={{
+                display: 'flex',
+                justifyContent:'space-around',
+                margin:'30px auto',
+                width:'70%', height: '160px', align:'center',
+                borderBottom:'1px solid gray'
+                
+            }}>
+                <div>
+                    <img src="https://images.unsplash.com/photo-1479936343636-73cdc5aae0c3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=580&q=80" style={{ width: '160px', height: '160px', borderRadius: "80px" }} />
+                </div>
+                <div>
+                    <h4>{state?state.name:"loading"}</h4>
+                    <div style={{ display: 'flex',justifyContent:"space-between",width:"108%"}}>
+                        <h5>40 Posts</h5>
+                        <h5>40 Followers</h5>
+                        <h5>40 Following</h5>
+                    </div>
+                </div>
+            </div>
+            <div className="gallery">
+                {
+                    mypic.map(item=>{
+                        return(
+                            <img className="item" src={item.photo} key={item._id}/>
+                        )
+                    })
+                }
+            
+
+            </div>
+        </div>
+    )
+}
+
+export default Profile
+
+
+2.instagram>src>App.js
+
+
+import './App.css';
+import React, { useEffect, createContext, useReducer,useContext } from 'react';
+import Navbar from './components/Navbar'
+import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom"
+import Home from './components/screens/Home';
+import Signup from './components/screens/Signup';
+import Signin from './components/screens/Signin';
+import Profile from './components/screens/Profile';
+import Createpost from './components/screens/CreatePost';
+import { reducer, initialState } from './components/reducer/userReducer'
+export const UserContext = createContext()
+
+const Routing = () => {
+  const history = useHistory();
+  const {state,dispatch} = useContext(UserContext)
+
+
+
+  useEffect(() => {
+    
+    //type = string
+    const user1 = localStorage.getItem('user')
+    // json.parse convert to json object
+    const user= JSON.parse(user1)
+   // console.log(user)
+   if (user) {
+    dispatch({type: 'USER',payload:user})
+  
+   }else {
+  
+    history.push('/signin')
+   }
+  }, [])
+  return (
+    <Switch>
+      <Route path="/" exact>
+        <Home />
+      </Route>
+
+      <Route path="/signin">
+        <Signin />
+      </Route>
+
+      <Route path="/signup">
+        <Signup />
+      </Route>
+
+      <Route path="/profile">
+        <Profile />
+      </Route>
+
+      <Route path="/createpost">
+        <Createpost />
+      </Route>
+    </Switch>
+
+  )
+
+
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <UserContext.Provider value={{ state, dispatch }} >
+      <BrowserRouter>
+        <Navbar />
+        <Routing />
+      </BrowserRouter>
+    </UserContext.Provider>
+
+
+
+  );
+}
+
+export default App;

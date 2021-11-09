@@ -1,0 +1,366 @@
+1.instagram>src>components>screens>Home.js
+
+import React, { useState, useEffect, useContext } from 'react'
+import { UserContext } from '../../App'
+
+const Home = () => {
+    const [data, setData] = useState([])
+    const { state, dispatch } = useContext(UserContext)
+    useEffect(() => {
+        fetch("/allpost", {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            }
+        }).then((res) => res.json())
+            .then(result => {
+                console.log(result.posts)
+                setData(result.posts)
+            })
+    }, [])
+    console.log("data", data)
+
+    const likePost = (id) => {
+        fetch("/like", {
+            method: "put",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            },
+            body: JSON.stringify({
+                postId: id,
+            })
+        }).then(res => res.json())
+            .then(result => {
+                console.log("result", result)
+                const newData = data.map(item => {
+                    if (item._id === result._id) {
+                        console.log("result like", result)
+                        return result;
+                    }
+                    else {
+                        console.log("item like", item)
+                        return item;
+                    }
+                })
+                setData(newData)
+            }).catch(err => {
+                console.error(err);
+            })
+    }
+
+
+
+    const unlikePost = (id) => {
+        fetch("/unlike", {
+            method: "put",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            },
+            body: JSON.stringify({
+                postId: id,
+            })
+        }).then(res => res.json())
+            .then(result => {
+                const newData = data.map(item => {
+                    if (item._id === result._id) {
+                        console.log("result unlike", result)
+                        return result;
+
+                    }
+                    else {
+                        console.log("item unlike", item)
+                        return item;
+                    }
+                })
+                setData(newData)
+            }).catch(err => {
+                console.error(err);
+            })
+
+        }
+
+            const makeComment = (text,postId)=>{
+                fetch('/comment',{
+                    method:"put",
+                    headers:{
+                        "Content-Type":"application/json",
+                        "Authorization":"Bearer "+localStorage.getItem("jwt")
+                    },
+                    body:JSON.stringify({
+                        text,
+                        postId
+                        
+                    })
+                }).then(res=>res.json())
+                .then(result=>{
+                    console.log(result)
+                    const newData = data.map(item=>{
+                      if(item._id==result._id){
+                          return result
+                      }else{
+                          return item
+                      }
+                   })
+                   console.log(newData)
+                 setData(newData)
+                }).catch(err=>{
+                    console.log("err",err)
+                })
+          }
+      
+
+    return (
+        <div className="home" >
+            {
+                data.map(item => {
+                    return (
+                        <div className="card home-card" key={item._id}>
+                            <h5 className="text-name" > {item.postedBy.name} </h5>
+                            <div className="card-image" >
+                                <img src={item.photo} />
+                            </div>
+                            <i className="material-icons text-icon" style={{ color: "red" }} > favorite </i>
+                            {
+                                item.likes.includes(state._id)
+                                    ?
+                                    <i class="material-icons text-icon" onClick={() => { unlikePost(item._id) }}> thumb_down </i>
+                                    :
+                                    <i class="material-icons text-icon " onClick={() => { likePost(item._id) }}> thumb_up </i>
+
+
+                            }
+
+                            <h6 className="text-body" >{item.likes.length} Likes</h6>
+                            <div className="" >
+                                <h6 className="text-home" > {item.title} </h6>
+                                <p className="text-body" > {item.body} </p>
+                    
+                                {
+                                    item.comments.map(record=>{
+                                        return(
+                                            console.log("record"),
+                                        <h6 key={record._id}><span style={{fontWeight:"300"}}>{record.postedBy.name}</span> {record.text}</h6>
+                                        )
+                                    })
+                                }
+
+                                <form onSubmit={(e)=>{
+                                    e.preventDefault()
+                                    makeComment(e.target[0].value,item._id)
+                                }}>
+                                  <input type="text" placeholder="add a comment" />  
+                                </form>
+
+                            </div>
+                        </div>
+
+                    )
+
+                })
+            }
+
+        </div>
+    )
+}
+
+export default Home
+
+
+
+2.server>routes>posts.js
+
+
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
+const requireLogin = require('../middleware/requiredLogin')
+const Post = mongoose.model("Post")
+
+
+router.get('/allpost',requireLogin, (req, res)=>{
+
+    Post.find()
+    // before .populate("postedBy")=>
+    // {
+    //     "_id": "6158a74308fcce8c75fe38f4",
+    //     "title": "title 1",
+    //     "body": "body 1",
+    //     "photo": "no pic",
+    //     "postedBy": "6158742a17948bf839f6a1d7",
+    //     "__v": 0
+    //   },
+
+    //after populate
+    // {
+    //     "_id": "6158a74308fcce8c75fe38f4",
+    //     "title": "title 1",
+    //     "body": "body 1",
+    //     "photo": "no pic",
+    //     "postedBy": {
+    //       "_id": "6158742a17948bf839f6a1d7",
+    //       "name": "Gb",
+    //       "email": "abcb@abc.com",
+    //       "password": "$2a$12$0NRVL.1a9nzzpTc9lDGo7OpBM0aIp7tURyrfm2H3hqulat8XdKUzW",
+    //       "__v": 0
+    //     },
+    //     "__v": 0
+    //   },
+
+
+    // show the internal value what we want Like id,password,name,email to only id name
+    .populate("postedBy","_id, name")
+    .populate("comments.postedBy","_id, name")
+    .then(posts=>{
+        res.json({posts: posts})
+    })
+    .catch((err)=>{console.error(err)})
+
+})
+
+
+router.post('/createpost',requireLogin, (req, res) => {
+
+    const {title,body,pic} = req.body;
+    //console.log(title,body,pic)
+    if(!title || !body|| !pic){
+        return res.status(404).json({ error: "Please add title and body"})
+    }
+  
+    //req.user pelam middleware use korar jonno
+    // console.log(req.user)
+    // res.send("ok")
+
+    //before    req.user.password=undefined
+    // {
+    //     "post": {
+    //         "title": "title 1",
+    //         "body": "body 1",
+    //         "photo": "no pic",
+    //         "postedBy": {
+    //             "_id": "6158742a17948bf839f6a1d7",
+    //             "name": "Gb",
+    //             "email": "abcb@abc.com",
+    //             "password": "$2a$12$0NRVL.1a9nzzpTc9lDGo7OpBM0aIp7tURyrfm2H3hqulat8XdKUzW",
+    //             "__v": 0
+    //         },
+    //         "_id": "6158a90c4fb3c1aa5c4761f0",
+    //         "__v": 0
+    //     }
+    // }
+
+    //password not showing in json response
+    req.user.password=undefined
+
+
+    const post= new Post({
+        title,
+        body,
+        photo:pic,
+        postedBy: req.user
+    })
+
+    post.save().then((result) =>{
+        res.json({post:result})
+    })
+    .catch((err)=>{ console.log(err) })
+})
+
+
+router.get('/mypost', requireLogin,(req, res) =>{
+    Post.find({postedBy:req.user._id})
+    .populate("postedBy","_id name")
+    .then((result)=>{
+        res.json({result})
+    }).catch((err)=>{ console.log(err) })
+})
+
+
+
+router.put('/like',requireLogin,(req,res)=>{
+    Post.findByIdAndUpdate(req.body.postId,{
+        $push:{likes:req.user._id}
+    },{
+        new:true
+    }).exec((err,result)=>{
+        if(err){
+            return res.status(422).json({error:err})
+        }else{
+            res.json(result)
+        }
+    })
+})
+
+
+router.put('/unlike',requireLogin,(req,res)=>{
+    Post.findByIdAndUpdate(req.body.postId,{
+        $pull:{likes:req.user._id}
+    },{
+        new:true
+    }).exec((err,result)=>{
+        if(err){
+            return res.status(422).json({error:err})
+        }else{
+            res.json(result)
+        }
+    })
+})
+
+
+router.put('/comment',requireLogin,(req,res)=>{
+    const comment = {
+        text:req.body.text,
+        postedBy:req.user._id
+    }
+    Post.findByIdAndUpdate(req.body.postId,{
+        $push:{comments:comment}
+    },{
+        new:true
+    })
+    .populate("comments.postedBy","_id name")
+    .populate("postedBy","_id name")
+    .exec((err,result)=>{
+        if(err){
+            return res.status(422).json({error:err})
+        }else{
+            res.json(result)
+        }
+    })
+})
+
+module.exports = router
+
+
+
+3.server>models>post.js
+
+
+
+const mongoose = require('mongoose');
+const {ObjectId}=mongoose.Schema.Types
+
+const postSchema = new mongoose.Schema({
+    title:{ 
+        type: String,
+        required: true,
+    },
+    body:{ 
+        type: String,
+        required: true,
+    },
+    photo:{  
+        type: String,
+        required: true,
+    },
+    likes:[{type:ObjectId,ref:"User"}],
+    comments:[{
+        text:String,
+        postedBy:{type:ObjectId,ref:"User"}
+    }],
+    postedBy:{ 
+        type: ObjectId,
+        ref:"User"
+    }
+})
+
+mongoose.model('Post',postSchema)

@@ -1,0 +1,54 @@
+1.instagram>src>components>screens>home.js
+
+
+import React, { useState, useEffect } from 'react'
+
+const Home = () => {
+    const [data, setData] = useState([])
+    useEffect(() => {
+
+        fetch("/allpost", {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            }
+        }).then((res) => res.json())
+            .then(result => {
+                console.log(result.posts)
+                setData(result.posts)
+            })
+    },[])
+
+    console.log(data)
+
+    return (
+        <div className="home" >
+            {
+                data.map(item => {
+                    return (
+                        <div className="card home-card" key={item._id}>
+                            <h5 className="text-name" > {item.postedBy.name} </h5>
+                            <div className="card-image" >
+                                <img src={item.photo} />
+                            </div>
+                            <div className="" >
+                                <h6 className="text-home" > {item.title} </h6> <p className="text-home" > {item.body} </p> <i className="material-icons text-icon"
+                                    style={{ color: "red" }} > favorite </i>
+                                <input className="text-input" type="text" placeholder="Add a comment" />
+                            </div>
+                        </div>
+
+                    )
+
+                })
+            }
+
+        </div>
+    )
+}
+
+export default Home
+
+
+
+
+

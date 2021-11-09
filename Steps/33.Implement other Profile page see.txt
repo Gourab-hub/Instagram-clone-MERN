@@ -1,0 +1,354 @@
+backend
+
+1.service>routes>user.js
+
+
+
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
+const requireLogin = require('../middleware/requiredLogin')
+const Post =  mongoose.model("Post")
+const User = mongoose.model("User")
+
+router.get('/user/:id', requireLogin, (req, res) =>{
+    User.findOne({_id: req.params.id})
+    .select("-password")
+    .then(user =>{
+        Post.find({postedBy: req.params.id})
+        .populate("postedBy","_id name")
+        .exec((err, posts) =>{
+            if(err) return res.status(422).json({error: err});
+            res.json({user,posts});
+
+        })
+
+    })
+    .catch(err =>console.error(err));
+
+})
+
+module.exports = router
+
+
+
+2.server>app.js
+
+
+
+
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const PORT = 5000
+const {MONGOURI}= require('./keys')
+
+//oEJcdFHykL2gZZqn
+//mongodb+srv://Insta-DB:<password>@cluster0.yhevi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+
+
+//Connect mongoDB
+mongoose.connect(MONGOURI,{ 
+    useNewUrlParser:true,
+    useUnifiedTopology:true,
+})
+mongoose.connection.on('connected', ()=>{
+    console.log("connected mongodb yahh................................................................")
+})
+mongoose.connection.on('error', (err)=>{
+    console.log(' err connected',err)
+})
+
+require('./models/user')
+require('./models/post')
+
+
+
+
+app.use(express.json());
+app.use(require('./routes/auth'))
+app.use(require('./routes/post'))
+app.use(require('./routes/user'))
+
+
+app.listen(PORT, () => {
+    console.log("server is running on port on ", PORT)
+});
+
+frnt end
+3.instagram>src>components>screens>UserProfile.js>
+
+
+
+
+import React,{ useState, useEffect,useContext } from 'react'
+import { UserContext } from '../../App'
+import {useParams} from 'react-router-dom'
+
+
+const UserProfile   = () => {
+    const [userProfile,setProfile] = useState(null)
+    const {state,dispatch} = useContext(UserContext)
+    const {userid}=useParams()
+    console.log(userid)
+
+    useEffect(()=>{
+        fetch(`/user/${userid}`,{
+            headers:{
+                "Authorization":"Bearer "+localStorage.getItem("jwt")
+            }
+        }).then(res=>res.json())
+        .then(result=>{
+            // console.log(result.user)
+          
+             setProfile(result)
+        })
+     },[])
+
+    return (
+        <>
+        {
+            userProfile?
+       
+        <div style={{maxWidth:"80%",margin:"0px auto"}}>
+            <div style={{
+                display: 'flex',
+                justifyContent:'space-around',
+                margin:'30px auto',
+                width:'70%', height: '160px', align:'center',
+                borderBottom:'1px solid gray'
+                
+            }}>
+                <div>
+                    <img src="https://images.unsplash.com/photo-1479936343636-73cdc5aae0c3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=580&q=80" style={{ width: '160px', height: '160px', borderRadius: "80px" }} />
+                </div>
+                <div>
+                    <h4>{userProfile?userProfile.user.name:"loading"}</h4>
+                    <h6>{userProfile?userProfile.user.email:"loading"}</h6>
+                    <div style={{ display: 'flex',justifyContent:"space-between",width:"108%"}}>
+                        <h5>{userProfile.posts.length} posts</h5>
+                        <h5>40 Followers</h5>
+                        <h5>40 Following</h5>
+                    </div>
+                </div>
+            </div>
+            <div className="gallery">
+                {userProfile?
+                    userProfile.posts.map(item=>{
+                        return(
+                            <img className="item" src={item.photo} key={item._id}/>
+                        )
+                    }):"loading"
+                }
+            
+
+            </div>
+        </div>: <h4>"loading"</h4>
+     
+
+}
+
+</>
+    )
+}
+
+export default UserProfile  
+
+
+
+
+4.instagram>src>components>screens>Home.js
+
+
+
+import React, { useState, useEffect, useContext } from 'react'
+import { UserContext } from '../../App'
+import {Link} from 'react-router-dom'
+
+
+const Home = () => {
+    const [data, setData] = useState([])
+    const { state, dispatch } = useContext(UserContext)
+    useEffect(() => {
+        fetch("/allpost", {
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            }
+        }).then((res) => res.json())
+            .then(result => {
+                console.log(result.posts)
+                setData(result.posts)
+            })
+    }, [])
+    console.log("data", data)
+
+    const likePost = (id) => {
+        fetch("/like", {
+            method: "put",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            },
+            body: JSON.stringify({
+                postId: id,
+            })
+        }).then(res => res.json())
+            .then(result => {
+                console.log("result", result)
+                const newData = data.map(item => {
+                    if (item._id === result._id) {
+                        console.log("result like", result)
+                        return result;
+                    }
+                    else {
+                        console.log("item like", item)
+                        return item;
+                    }
+                })
+                setData(newData)
+            }).catch(err => {
+                console.error(err);
+            })
+    }
+
+
+
+    const unlikePost = (id) => {
+        fetch("/unlike", {
+            method: "put",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("jwt")
+            },
+            body: JSON.stringify({
+                postId: id,
+            })
+        }).then(res => res.json())
+            .then(result => {
+                const newData = data.map(item => {
+                    if (item._id === result._id) {
+                        console.log("result unlike", result)
+                        return result;
+
+                    }
+                    else {
+                        console.log("item unlike", item)
+                        return item;
+                    }
+                })
+                setData(newData)
+            }).catch(err => {
+                console.error(err);
+            })
+
+        }
+
+            const makeComment = (text,postId)=>{
+                fetch('/comment',{
+                    method:"put",
+                    headers:{
+                        "Content-Type":"application/json",
+                        "Authorization":"Bearer "+localStorage.getItem("jwt")
+                    },
+                    body:JSON.stringify({
+                        text,
+                        postId
+                        
+                    })
+                }).then(res=>res.json())
+                .then(result=>{
+                    console.log(result)
+                    const newData = data.map(item=>{
+                      if(item._id==result._id){
+                          return result
+                      }else{
+                          return item
+                      }
+                   })
+                   console.log(newData)
+                 setData(newData)
+                }).catch(err=>{
+                    console.log("err",err)
+                })
+          }
+      
+          const deletePost=(postid)=>{
+              fetch(`deletepost/${postid}`,{
+                method:"delete",
+                headers:{
+                
+                    "Authorization":"Bearer "+localStorage.getItem("jwt")
+                }
+
+              }).then(res=>res.json())
+              .then(result=>{
+                  console.log(result)
+                  const newData = data.filter(item => {
+                      return item._id!==result._id
+                  })
+                  setData(newData)
+              })
+          }
+
+    return (
+        <div className="home" >
+            {
+                data.map(item => {
+                    return (
+                        <div className="card home-card" key={item._id}>
+                            
+                            <h5 style={{padding:"5px"}}><Link to={item.postedBy._id !== state._id? `/profile/${item.postedBy._id}` :"/profile"  }>{item.postedBy.name}</Link>  {item.postedBy._id===state._id && 
+                         <i class="material-icons text-icon " style={{float:"right"}}
+                         onClick={() =>deletePost(item._id)} > delete </i>}
+                        </h5>
+                       
+                           
+                            <div className="card-image" >
+                                <img src={item.photo} />
+                            </div>
+                            <i className="material-icons text-icon" style={{ color: "red" }} > favorite </i>
+                            {
+                                item.likes.includes(state._id)
+                                    ?
+                                    <i class="material-icons text-icon" onClick={() => { unlikePost(item._id) }}> thumb_down </i>
+                                    :
+                                    <i class="material-icons text-icon " onClick={() => { likePost(item._id) }}> thumb_up </i>
+
+
+                            }
+
+                            <h6 className="text-body" >{item.likes.length} Likes</h6>
+                            <div className="" >
+                                <h6 className="text-home" > {item.title} </h6>
+                                <p className="text-body" > {item.body} </p>
+                    
+                                {
+                                    item.comments.map(record=>{
+                                        return(
+                                            //console.log("record"),
+                                        <h6 key={record._id}><span style={{fontWeight:"300"}}>{record.postedBy.name}</span> {record.text}</h6>
+                                        )
+                                    })
+                                }
+
+
+                                <form onSubmit={(e)=>{
+                                    e.preventDefault()
+                                    makeComment(e.target[0].value,item._id)
+                                }}>
+                                  <input type="text" placeholder="add a comment" />  
+                                </form>
+
+                            </div>
+                        </div>
+
+                    )
+
+                })
+            }
+
+        </div>
+    )
+}
+
+export default Home

@@ -1,0 +1,172 @@
+1. instagram>src>app.js
+
+
+import './App.css';
+import React, { useEffect, createContext, useReducer,useContext } from 'react';
+import Navbar from './components/Navbar'
+import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom"
+import Home from './components/screens/Home';
+import Signup from './components/screens/Signup';
+import Signin from './components/screens/Signin';
+import Profile from './components/screens/Profile';
+import Createpost from './components/screens/CreatePost';
+import { reducer, initialState } from './components/reducer/userReducer'
+export const UserContext = createContext()
+
+const Routing = () => {
+  const history = useHistory();
+  const {state,dispatch} = useContext(UserContext)
+  useEffect(() => {
+    
+    //type = string
+    const user1 = localStorage.getItem('user')
+    // json.parse convert to json object
+    const user= JSON.parse(user1)
+   // console.log(user)
+   if (user) {
+    history.push('/')
+   }else {
+     dispatch({type: 'USER',path:user})
+    history.push('/signin')
+   }
+  }, [])
+  return (
+    <Switch>
+      <Route path="/" exact>
+        <Home />
+      </Route>
+
+      <Route path="/signin">
+        <Signin />
+      </Route>
+
+      <Route path="/signup">
+        <Signup />
+      </Route>
+
+      <Route path="/profile">
+        <Profile />
+      </Route>
+
+      <Route path="/createpost">
+        <Createpost />
+      </Route>
+    </Switch>
+
+  )
+
+
+}
+
+function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  return (
+    <UserContext.Provider value={{ state, dispatch }} >
+      <BrowserRouter>
+        <Navbar />
+        <Routing />
+      </BrowserRouter>
+    </UserContext.Provider>
+
+
+
+  );
+}
+
+export default App;
+
+
+2.instagram>src>Signin.js
+
+import React,{useState,useContext} from 'react'
+import { UserContext } from '../../App'
+import { Link,useHistory } from 'react-router-dom'
+import M from 'materialize-css'
+
+
+
+const Signin = () => {
+    const {state,dispatch}=useContext(UserContext)
+    const histroy = useHistory()
+   
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const PostData = () => {
+
+        if(!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email)){
+            M.toast({html: "invalid email",classes:"#c62828 red darken-3"})
+            return
+        }
+
+        fetch("/signin", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+
+                email,
+                password,
+            })
+        }).then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.error) {
+                    M.toast({ html: data.error, classes: 'rounded red' })
+                }
+                else {
+
+                    //token store 
+                    localStorage.setItem("jwt",data.token)
+                    localStorage.setItem("user",JSON.stringify(data.user))
+
+                    dispatch({type: 'USER',payload:data.user})
+                    M.toast({ html: "Successfully Signin", classes: 'rounded green' })
+                    histroy.push('/')
+                }
+
+                console.log(data);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+
+    return (
+        <div className="mycard">
+            <div className="card auth-card input-field">
+                <h2 className="brand-logo">Instagram</h2>
+                <input className="input-field" type="text" placeholder="Email" aautocomplete="off"
+                        value={email} onChange={(e) => setEmail(e.target.value)} />
+
+
+                    <input className="input-field" type="text" placeholder="Password " autocomplete="off"
+                        value={password} onChange={(e) => setPassword(e.target.value)} />
+
+
+                <button className="btn waves-effect waves-light #448aff blue accent-2" onClick={() => PostData()}>Login</button>
+                <h5>
+                    <Link to="/signup">Don't have an account?</Link>
+                </h5>
+            </div>
+        </div>
+    )
+}
+
+export default Signin
+
+
+3.instagram>reducer>useResucer.js
+
+
+export const initialState =null
+
+
+export const reducer=(state,action)=>{
+    if(action.type ==="USER"){
+        return action.payload
+    }
+    return action.payload
+}

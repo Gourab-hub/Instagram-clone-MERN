@@ -1,0 +1,225 @@
+1.instagram>components>screens>CreatePost
+
+
+import React, { useState } from 'react'
+import { Link, useHistory } from 'react-router-dom'
+import M from 'materialize-css'
+
+
+const Createpost = () => {
+    const histroy = useHistory()
+
+    const [title, setTitle] = useState("")
+    const [body, setBody] = useState("")
+    const [image, setImage] = useState("")
+    const [url, setUrl] = useState("")
+
+
+    const postDetails = () => {
+        const data = new FormData()
+        data.append('file', image)
+        data.append('upload_preset', "insta-clone")
+        data.append('cloud_name', "gourab")
+        const res = fetch("https://api.cloudinary.com/v1_1/gourab/image/upload", {
+            method: "post",
+            body: data
+        })
+            .then(res => res.json())
+            .then(data => {
+                setUrl(data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+
+        fetch("/createpost", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                title,
+                body,
+                url
+            })
+        }).then(res => res.json())
+            .then(data => {
+                console.log(data);
+                if (data.error) {
+                    M.toast({ html: data.error, classes: 'rounded red' })
+                }
+                else {
+                    M.toast({ html: "Created Post Successfully ", classes: 'rounded green' })
+                    histroy.push('/')
+                }
+                console.log(data);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
+
+
+    return (
+        <div className="mycard">
+
+            <div className="card auth-card input-field">
+                <h5 className="Create-name">Instagram</h5>
+                <input className="input-field" type="text" placeholder="Title" aautocomplete="off" value={title} onChange={(e) => setTitle(e.target.value)} />
+                <input className="input-field" type="text" placeholder="Body " autocomplete="off" value={body} onChange={(e) => setBody(e.target.value)} />
+
+                <div className="file-field input-field">
+                    <div className="btn #448aff blue accent-2">
+                        <span>File</span>
+                        <input type="file" onChange={(e) => setImage(e.target.files[0])} />
+                    </div>
+                    <div className="file-path-wrapper ">
+                        <input className="file-path validate" type="text" />
+                    </div>
+                </div>
+                <button className="btn waves-effect waves-light #448aff blue accent-2" onClick={() => postDetails()}>SUBMIT POST</button>
+
+            </div>
+        </div>
+
+    )
+}
+
+export default Createpost
+
+
+2.service>router>post.js
+
+
+const express = require('express');
+const router = express.Router();
+const mongoose = require('mongoose');
+const requireLogin = require('../middleware/requiredLogin')
+const Post = mongoose.model("Post")
+
+
+router.get('/allpost', (req, res)=>{
+
+    Post.find()
+    // before .populate("postedBy")=>
+    // {
+    //     "_id": "6158a74308fcce8c75fe38f4",
+    //     "title": "title 1",
+    //     "body": "body 1",
+    //     "photo": "no pic",
+    //     "postedBy": "6158742a17948bf839f6a1d7",
+    //     "__v": 0
+    //   },
+
+    //after populate
+    // {
+    //     "_id": "6158a74308fcce8c75fe38f4",
+    //     "title": "title 1",
+    //     "body": "body 1",
+    //     "photo": "no pic",
+    //     "postedBy": {
+    //       "_id": "6158742a17948bf839f6a1d7",
+    //       "name": "Gb",
+    //       "email": "abcb@abc.com",
+    //       "password": "$2a$12$0NRVL.1a9nzzpTc9lDGo7OpBM0aIp7tURyrfm2H3hqulat8XdKUzW",
+    //       "__v": 0
+    //     },
+    //     "__v": 0
+    //   },
+
+
+    // show the internal value what we want Like id,password,name,email to only id name
+    .populate("postedBy","_id, name")
+    .then(posts=>{
+        res.json({posts: posts})
+    })
+    .catch((err)=>{console.error(err)})
+
+})
+
+
+router.post('/createpost',requireLogin, (req, res) => {
+
+    const {title,body,pic} = req.body;
+    console.log(title,body,pic)
+    if(!title || !body|| !pic){
+        return res.status(404).json({ error: "Please add title and body"})
+    }
+  
+    //req.user pelam middleware use korar jonno
+    // console.log(req.user)
+    // res.send("ok")
+
+    //before    req.user.password=undefined
+    // {
+    //     "post": {
+    //         "title": "title 1",
+    //         "body": "body 1",
+    //         "photo": "no pic",
+    //         "postedBy": {
+    //             "_id": "6158742a17948bf839f6a1d7",
+    //             "name": "Gb",
+    //             "email": "abcb@abc.com",
+    //             "password": "$2a$12$0NRVL.1a9nzzpTc9lDGo7OpBM0aIp7tURyrfm2H3hqulat8XdKUzW",
+    //             "__v": 0
+    //         },
+    //         "_id": "6158a90c4fb3c1aa5c4761f0",
+    //         "__v": 0
+    //     }
+    // }
+
+    //password not showing in json response
+    req.user.password=undefined
+
+
+    const post= new Post({
+        title,
+        body,
+        photo:pic,
+        postedBy: req.user
+    })
+    post.save().then((result) =>{
+        res.json({post:result})
+    })
+    .catch((err)=>{ console.log(err) })
+})
+
+
+router.get('/mypost', requireLogin,(req, res) =>{
+    Post.find({postedBy:req.user._id})
+    .populate("postedBy","_id name email")
+    .then((result)=>{
+        res.json({result})
+    }).catch((err)=>{ console.log(err) })
+})
+
+module.exports = router
+
+
+3.service>models>post.js
+
+
+const mongoose = require('mongoose');
+const {ObjectId}=mongoose.Schema.Types
+
+const postSchema = new mongoose.Schema({
+    title:{ 
+        type: 'string',
+        required: true,
+    },
+    body:{ 
+        type: 'string',
+        required: true,
+    },
+    photo:{  
+        type: 'string',
+        required: true,
+    },
+    postedBy:{ 
+        type: ObjectId,
+        ref:"User"
+    }
+})
+
+mongoose.model('Post',postSchema)
+

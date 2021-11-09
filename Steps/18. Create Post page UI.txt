@@ -1,0 +1,116 @@
+1.App.js>components>screens>CreatePost.js
+
+
+
+
+import React from 'react'
+
+const Createpost = () => {
+    return (
+        <div className="mycard">
+           
+            <div className="card auth-card input-field">
+            <h5 className="text-name">Create Post</h5>
+                <input type="text" placeholder="Title" />
+                <input type="text" placeholder="Body" />
+                <div className="file-field input-field">
+                    <div className="btn #448aff blue accent-2">
+                        <span>File</span>
+                        <input type="file" />
+                    </div>
+                    <div className="file-path-wrapper ">
+                        <input className="file-path validate" type="text" />
+                    </div>
+                </div>
+                <button className="btn waves-effect waves-light #448aff blue accent-2" >SUBMIT POST</button>
+
+            </div>
+        </div>
+
+    )
+}
+
+export default Createpost
+
+
+2.App.css
+
+@import url('https://fonts.googleapis.com/css2?family=Grand+Hotel&display=swap');
+body {
+    background-color: #fff;
+}
+
+a {
+    color: black !important;
+}
+
+.brand-logo {
+    font-family: 'Grand Hotel', cursive;
+    font-weight: 500;
+    margin-left: 2rem;
+}
+
+.auth-card {
+    padding: 40px;
+    margin: 5rem auto;
+    text-align: center;
+    max-width: 600px;
+}
+
+.input-field input[type=text]:focus {
+    border-bottom: 1px solid rgb(6, 51, 102) !important;
+    box-shadow: 0 1px 0 0 rgb(5, 47, 94) !important;
+}
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    width: '70%';
+    margin: '30px auto';
+    justify-content: space-around;
+    align-items: center;
+}
+
+.item {
+    width: 25%;
+    margin: 20px;
+    height: 50%;
+}
+
+.home {
+    max-width: 60%;
+    margin: 26px auto;
+}
+
+.home-card {
+    width: 80%;
+    margin: 26px auto;
+}
+
+.card-image {
+    margin: 20px;
+    
+}
+
+.text-home {
+    margin: 20px;
+    font-weight: 400;
+}
+
+.text-icon {
+    margin: 0 20px;
+}
+
+.text-input {
+    margin: 10px 20px !important;
+    max-width: 90%;
+    font-weight: 400;
+}
+
+.text-name{
+    font-weight: 400;
+    font-style:oblique;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 20px 20px !important;
+    padding: 6px !important;
+}
