@@ -23,7 +23,7 @@ useEffect(() =>{
            
         })
 },[])
-
+**************************
 useEffect(()=>{
     if(image){
         const data = new FormData()
@@ -51,6 +51,8 @@ useEffect(()=>{
 const updatephoto=(file)=>{
     setImage(file)
 }
+
+*****************************
     return (
         <div style={{maxWidth:"80%",margin:"0px auto"}}>
             <div style={{
@@ -61,6 +63,8 @@ const updatephoto=(file)=>{
                 borderBottom:'1px solid gray'
                 
             }}>
+
+            ***************************
                 <div>
                     <img className="img-border" src={state?state.pic:"loading"} style={{ width: '160px', height: '160px', borderRadius: "80px" }} />
 
@@ -75,6 +79,9 @@ const updatephoto=(file)=>{
                     </div>
 
                 </div>
+
+
+                *********************
                 <div>
                     <h4>{state?state.name:"loading"}</h4>
                     <h5>{state?state.email:"loading"}</h5>
