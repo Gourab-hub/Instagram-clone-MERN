@@ -5,8 +5,6 @@ git push -u origin main
 
 
 
-
-
 git add .
 git commit -m "Your commit message"
 git remote add origin https://github.com/Gourab-hub/Instagram-clone-MERN.git
