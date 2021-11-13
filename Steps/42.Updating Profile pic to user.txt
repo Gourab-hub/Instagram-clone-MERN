@@ -1,3 +1,7 @@
+1.instagram\src\components\screens\Profile.js
+
+
+
 import React,{ useState, useEffect,useContext } from 'react'
 import { UserContext } from '../../App'
 
@@ -108,3 +112,34 @@ const updatephoto=(file)=>{
 }
 
 export default Profile
+
+
+2.instagram\src\components\reducer\userReducer.js
+
+export const initialState =null
+
+
+export const reducer=(state,action)=>{
+    if(action.type ==="USER"){
+        //console.log("action.payload",action.payload)
+        return action.payload
+    }
+    if(action.type ==="CLEAR"){
+        return null;
+    }
+    if(action.type==="UPDATE"){
+        return {
+            ...state,
+            followers:action.payload.followers,
+            following:action.payload.following
+        }
+    }
+    if(action.type=="UPDATEPIC"){
+        return {
+            ...state,
+            pic:action.payload
+        }
+    }
+
+    return state
+}

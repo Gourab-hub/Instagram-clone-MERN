@@ -16,10 +16,10 @@ export const reducer=(state,action)=>{
             following:action.payload.following
         }
     }
-    if(action.type==="UPDATEPIC"){
+    if(action.type=="UPDATEPIC"){
         return {
             ...state,
-            pic:action.payload.pic
+            pic:action.payload
         }
     }
 
