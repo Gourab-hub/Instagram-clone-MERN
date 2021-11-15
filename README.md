@@ -1,4 +1,4 @@
 # Instagram-clone-MERN
 
 
-### WEBSITE LINK  instagramclone52.herokuapp.com
+### WEBSITE LINK  https://instagramclone52.herokuapp.com/
