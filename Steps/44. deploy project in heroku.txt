@@ -1,0 +1,148 @@
+1.copy instagram(React project) and paste server folder
+2.F:\clone insta\server
+
+
+
+
+npm run build
+3.F:\clone insta\server\config(folder)
+
+create 3 files
+
+i-F:\clone insta\server\config\dev.js >
+
+module.exports={
+    MONGOURI:"mongodb+srv://insta:oEJcdFHykL2gZZqn@cluster0.yhevi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    JWT_SECRET:"vvfudadufvuagfygsibibdvidfbvfdv165151511665fdab6f1b651b51df1"
+}
+
+ii-F:\clone insta\server\config\keys.js>
+
+
+if(process.env.NODE_ENV==="production"){
+    module.exports=require('./prod')
+}else{
+    module.exports=require('./dev')
+}
+
+
+iii-F:\clone insta\server\config\prod.js>
+
+
+module.exports={
+    MONGOURI:process.env.MONGOURI,
+    JWT_SECRET:process.env.JWT_SECRET
+}
+
+
+
+4.
+
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const PORT =  process.env.PORT || 5000
+const {MONGOURI}= require('./config/keys')
+
+//oEJcdFHykL2gZZqn
+//mongodb+srv://Insta-DB:<password>@cluster0.yhevi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+
+
+//Connect mongoDB
+mongoose.connect(MONGOURI,{ 
+    useNewUrlParser:true,
+    useUnifiedTopology:true,
+})
+mongoose.connection.on('connected', ()=>{
+    console.log("connected mongodb yahh................................................................")
+})
+mongoose.connection.on('error', (err)=>{
+    console.log(' err connected',err)
+})
+
+require('./models/user')
+require('./models/post')
+
+
+
+
+app.use(express.json());
+app.use(require('./routes/auth'))
+app.use(require('./routes/post'))
+app.use(require('./routes/user'))
+
+****************
+if(process.env.NODE_ENV=="production"){
+    app.use(express.static('instagram/build'))
+    const path=require('path')
+    app.get("*",(req,res)=>{
+        res.sendFile(path.resolve(__dirname,'instagram','build','index.html'))
+    })
+}
+
+
+************
+app.listen(PORT, () => {
+    console.log("server is running on port on ", PORT)
+});
+
+
+
+5.F:\clone insta\server\instagram\package.json
+
+
+
+
+
+delete the proxy
+
+"proxy": "http://localhost:5000",
+
+
+6.F:\clone insta\server\package.json
+
+
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+
+  *****************************
+  "scripts": {
+    "start": "node app.js",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix instagram && npm run build --prefix instagram"
+  },
+
+
+  *****************************
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.8"
+  }
+}
+
+
+
+
+
+7.F:\clone insta\server
+
+
+
+login in heroku 
+
+
+
+
+git init 
+git add .
+heroku login
+heroku git:remote -a instagramclone52
+git commit -am "make it better"
+git push heroku master
